@@ -21,3 +21,8 @@ These algorithms achieve $O(n)$ time complexity by optimizing the indexing logic
 The **Position Pro (PP)** algorithm is built upon the foundational work of **Wendy Myrvold and Frank Ruskey**, specifically their $O(n)$ unranking algorithm (2001). 
 
 While the MR algorithm uses a specific swap-based approach, the PP method introduces a more intuitive indexing logic $D[i]$ that simplifies the implementation and enhances understanding of the mapping process.
+
+## 💡 Why Position Pro?
+The **Position Pro (PP)** algorithm provides a more intuitive $O(n)$ implementation compared to the classic Myrvold-Ruskey (MR) method:
+* **Simpler Indexing**: Replaces the traditional swap-based unranking with a direct mapping logic.
+* **Educational Value**: The provided visualizations make the complex mapping process easy to understand.
