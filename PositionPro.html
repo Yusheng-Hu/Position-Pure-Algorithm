@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PP Algorithm - Full 4! Permutation Explorer</title>
+    <style>
+        :root { --primary: #2563eb; --active: #ef4444; --val-color: #059669; --idx-color: #7c3aed; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; margin: 0; height: 100vh; display: flex; overflow: hidden; }
+        
+        /* Sidebar: Now scrollable for 24 items */
+        .sidebar { width: 300px; background: #0f172a; color: white; padding: 20px; flex-shrink: 0; z-index: 2000; display: flex; flex-direction: column; }
+        .sidebar h3 { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+        .scroll-area { flex: 1; overflow-y: auto; padding-right: 10px; }
+        .scroll-area::-webkit-scrollbar { width: 5px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        .c-item { 
+            padding: 10px 15px; margin: 6px 0; border-radius: 8px; cursor: pointer; 
+            background: #1e293b; font-family: 'Fira Code', monospace; font-size: 0.85rem;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: 0.2s; border: 1px solid transparent;
+        }
+        .c-item:hover { background: #334155; border-color: var(--primary); }
+        .c-item.active { background: var(--primary); border-color: white; box-shadow: 0 4px 10px rgba(37,99,235,0.4); }
+        .c-item .num { opacity: 0.4; font-size: 0.7rem; width: 25px; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .stage { background: white; padding: 50px; border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); width: 850px; position: relative; }
+        
+        .row-group { margin-bottom: 40px; text-align: center; }
+        .label { font-size: 0.7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
+        .row { display: flex; justify-content: center; gap: 35px; position: relative; }
+        
+        .cell { 
+            width: 70px; height: 70px; border: 2px solid #e2e8f0; border-radius: 14px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 2rem; font-weight: 800; background: white; position: relative; z-index: 10;
+        }
+        .idx-cell { background: #f8fafc; border-color: #cbd5e1; color: #64748b; font-size: 0.9rem; height: 35px; border-style: dashed; }
+
+        .beam {
+            position: fixed; width: 94px; background: rgba(37, 99, 235, 0.05);
+            border: 2px dashed rgba(37, 99, 235, 0.1); border-radius: 20px;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s; z-index: 1;
+        }
+
+        .arrow-line {
+            position: fixed; height: 4px; transform-origin: left center; 
+            opacity: 0; z-index: 500; pointer-events: none; transition: width 0.8s ease;
+        }
+        .arrow-line::after { content: ''; position: absolute; right: -10px; top: -6px; border: 8px solid transparent; }
+        .arrow-purple { background: var(--idx-color); } .arrow-purple::after { border-left-color: var(--idx-color); }
+        .arrow-green { background: var(--val-color); } .arrow-green::after { border-left-color: var(--val-color); }
+        .arrow-blue { background: var(--primary); } .arrow-blue::after { border-left-color: var(--primary); }
+
+        .ball { 
+            position: fixed; width: 48px; height: 48px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.4rem; font-weight: bold; opacity: 0; z-index: 1000; color: white;
+            pointer-events: none; transform: translate(-50%, -50%);
+        }
+
+        .msg { font-size: 1.2rem; font-weight: 600; color: #1e293b; text-align: center; margin-bottom: 40px; min-height: 45px; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h3>Sequence Library (4!)</h3>
+    <div class="scroll-area" id="sidebar-list"></div>
+</div>
+
+<div class="main-content">
+    <div class="stage">
+        <div class="msg" id="msg">Choose a Control Sequence from the list</div>
+        <div class="row-group"><span class="label">Fixed Physical Slots</span><div class="row" id="idx-row"></div></div>
+        <div class="row-group"><span class="label">Input Sequence C</span><div class="row" id="c-row"></div></div>
+        <div class="row-group"><span class="label">Output Array D</span><div class="row" id="d-row"></div></div>
+    </div>
+</div>
+
+<div id="beam-i" class="beam"></div>
+<div id="beam-t" class="beam"></div>
+<div id="dynamic-arrow" class="arrow-line"></div>
+<div id="ball-val" class="ball" style="background:var(--val-color)"></div>
+<div id="ball-idx" class="ball" style="background:var(--primary)"></div>
+<div id="ball-c" class="ball" style="background:var(--active)"></div>
+
+<script>
+    // Generate all 24 permutations of C where C[i] <= i
+    const generateCSequences = () => {
+        const results = [];
+        for (let c0 = 0; c0 <= 0; c0++) {
+            for (let c1 = 0; c1 <= 1; c1++) {
+                for (let c2 = 0; c2 <= 2; c2++) {
+                    for (let c3 = 0; c3 <= 3; c3++) {
+                        results.push([c0, c1, c2, c3]);
+                    }
+                }
+            }
+        }
+        return results;
+    };
+
+    const cSequences = generateCSequences();
+    const listContainer = document.getElementById('sidebar-list');
+
+    cSequences.forEach((c, idx) => {
+        const div = document.createElement('div');
+        div.className = 'c-item';
+        div.id = `item-${idx}`;
+        div.innerHTML = `<span class="num">${String(idx + 1).padStart(2, '0')}</span><span>[${c.join(',')}]</span>`;
+        div.onclick = () => playSequence(c, idx);
+        listContainer.appendChild(div);
+    });
+
+    async function playSequence(c, index) {
+        if (window.isRunning) return; window.isRunning = true;
+        
+        document.querySelectorAll('.c-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(`item-${index}`).classList.add('active');
+        
+        const msg = document.getElementById('msg');
+        const arrow = document.getElementById('dynamic-arrow');
+        
+        // Setup Grid
+        document.getElementById('idx-row').innerHTML = [0,1,2,3].map(i => `<div class="cell idx-cell" id="idx-${i}">${i}</div>`).join('');
+        document.getElementById('c-row').innerHTML = c.map((v, i) => `<div class="cell" id="c-${i}">${v}</div>`).join('');
+        document.getElementById('d-row').innerHTML = [0,1,2,3].map(i => `<div class="cell" id="d-${i}" style="color:#cbd5e1">•</div>`).join('');
+
+        await sleep(500);
+
+        for (let i = 0; i < c.length; i++) {
+            const ci = c[i], elIdxI = document.getElementById(`idx-${i}`), elCi = document.getElementById(`c-${i}`),
+                  elDi = document.getElementById(`d-${i}`), elDt = document.getElementById(`d-${ci}`), elIdxT = document.getElementById(`idx-${ci}`);
+
+            // STEP 1: LOAD CI
+            msg.innerHTML = `Step 1: Focus Column <b>${i}</b>. Read Shift C[${i}] = <b>${ci}</b>`;
+            showBeam('beam-i', elIdxI, elDi, 'var(--primary)');
+            await sleep(1000);
+
+            const bC = document.getElementById('ball-c'); bC.innerText = ci;
+            moveBall(bC, elCi, 0); bC.style.opacity = 1;
+            await sleep(800);
+            moveBall(bC, elDi, 1500); 
+            await sleep(1800);
+            elDi.innerText = ci; elDi.style.color = 'var(--idx-color)'; bC.style.opacity = 0;
+
+            // STEP 2: ADDRESSING PATH
+            msg.innerHTML = `Step 2: D[${i}] addresses Physical Slot <b>${ci}</b>`;
+            showBeam('beam-t', elIdxT, elDt, 'var(--val-color)');
+            drawArrow(arrow, elDi, elIdxT, 'arrow-purple');
+            await sleep(1800);
+            arrow.style.opacity = 0;
+
+            // STEP 3: VALUE EXTRACTION
+            const oldVal = elDt.innerText;
+            msg.innerHTML = `Step 4: Move Old Value <b>${oldVal}</b> from Slot ${ci} back to Slot ${i}`;
+            drawArrow(arrow, elDt, elDi, 'arrow-green');
+            await sleep(1200);
+            
+            const bV = document.getElementById('ball-val'); bV.innerText = oldVal;
+            moveBall(bV, elDt, 0); bV.style.opacity = 1;
+            await sleep(800);
+            arrow.style.opacity = 0;
+            moveBall(bV, elDi, 1500);
+            await sleep(1800);
+            elDi.innerText = oldVal; elDi.style.color = 'var(--val-color)'; bV.style.opacity = 0;
+
+            // STEP 4: INDEX STORAGE
+            msg.innerHTML = `Step 5: Store Physical Index <b>${i}</b> into Target Slot ${ci}`;
+            drawArrow(arrow, elIdxI, elDt, 'arrow-blue');
+            await sleep(1200);
+
+            const bI = document.getElementById('ball-idx'); bI.innerText = i;
+            moveBall(bI, elIdxI, 0); bI.style.opacity = 1;
+            await sleep(800);
+            arrow.style.opacity = 0;
+            moveBall(bI, elDt, 1500);
+            await sleep(1800);
+            elDt.innerText = i; elDt.style.color = 'var(--primary)'; bI.style.opacity = 0;
+
+            await sleep(1000);
+            document.getElementById('beam-i').style.opacity = 0;
+            document.getElementById('beam-t').style.opacity = 0;
+        }
+        msg.innerHTML = "<b style='color:var(--val-color)'>✓ Full Permutation Built Successfully!</b>"; 
+        window.isRunning = false;
+    }
+
+    function getPos(el) {
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2, top: r.top, left: r.left, bottom: r.bottom };
+    }
+
+    function moveBall(ball, target, duration) {
+        const p = getPos(target);
+        ball.style.transition = duration === 0 ? 'none' : `all ${duration}ms cubic-bezier(0.4, 0, 0.2, 1)`;
+        ball.style.left = p.x + 'px'; ball.style.top = p.y + 'px';
+    }
+
+    function drawArrow(a, from, to, type) {
+        const p1 = getPos(from), p2 = getPos(to);
+        const len = Math.sqrt((p2.x-p1.x)**2 + (p2.y-p1.y)**2);
+        const ang = Math.atan2(p2.y-p1.y, p2.x-p1.x) * 180 / Math.PI;
+        a.className = 'arrow-line ' + type;
+        a.style.transition = 'none';
+        a.style.width = '0px'; a.style.left = p1.x + 'px'; a.style.top = p1.y + 'px';
+        a.style.transform = `rotate(${ang}deg)`; a.style.opacity = 1;
+        setTimeout(() => { a.style.transition = 'width 1s ease'; a.style.width = len + 'px'; }, 50);
+    }
+
+    function showBeam(id, tEl, bEl, color) {
+        const b = document.getElementById(id), pT = getPos(tEl), pB = getPos(bEl);
+        b.style.left = (pT.left - 12) + 'px'; b.style.top = (pT.top - 15) + 'px';
+        b.style.width = (tEl.offsetWidth + 24) + 'px'; b.style.height = (pB.bottom - pT.top + 30) + 'px';
+        b.style.borderColor = color.replace(')', ', 0.3)'); b.style.background = color.replace(')', ', 0.08)'); b.style.opacity = 1;
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>

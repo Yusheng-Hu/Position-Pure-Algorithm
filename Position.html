@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Position Pro - Lexicographical Order</title>
+    <style>
+        :root { --primary: #2563eb; --active: #ef4444; --match-bg: rgba(245, 158, 11, 0.4); --match-border: #f59e0b; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f1f5f9; display: flex; margin: 0; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar in Lexicographical Order */
+        .sidebar { width: 320px; background: #0f172a; color: white; overflow-y: auto; padding: 20px; border-right: 1px solid #1e293b; }
+        .sidebar h3 { font-size: 0.9rem; color: #64748b; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #1e293b; padding-bottom: 15px; margin-bottom: 15px; }
+        .c-item { padding: 12px; margin: 6px 0; border-radius: 8px; cursor: pointer; font-family: 'Courier New', monospace; display: flex; justify-content: space-between; background: #1e293b; transition: 0.2s; }
+        .c-item:hover { background: #334155; transform: translateX(5px); }
+        .c-item.selected { background: var(--primary); border-color: #60a5fa; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .stage { background: white; padding: 60px; border-radius: 32px; box-shadow: 0 20px 50px rgba(0,0,0,0.08); width: 880px; position: relative; border: 1px solid #e2e8f0; }
+        .array-container { display: flex; justify-content: center; gap: 24px; margin-top: 100px; }
+        
+        .cell { 
+            width: 95px; height: 95px; border: 3px solid #e2e8f0; border-radius: 24px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 2.4rem; font-weight: 800; color: #cbd5e1; 
+            position: relative; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        .cell-idx { position: absolute; bottom: -35px; font-size: 0.8rem; color: #94a3b8; font-weight: 600; font-family: monospace; }
+
+        /* Sync Matching Styles */
+        .is-matching { background-color: var(--match-bg) !important; border-color: var(--match-border) !important; color: #b45309 !important; transform: translateY(-8px); box-shadow: 0 12px 24px rgba(245, 158, 11, 0.25); }
+        .is-active-val { color: var(--active) !important; }
+        .is-final { color: var(--primary) !important; border-color: var(--primary) !important; transform: translateY(0); }
+
+        /* Index Flyer Ball */
+        #floater-idx { 
+            position: absolute; width: 56px; height: 56px; background: var(--primary); 
+            color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.6rem; font-weight: bold; opacity: 0; z-index: 100; pointer-events: none; 
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4); 
+        }
+
+        .monitor { position: absolute; top: 25px; left: 25px; font-family: 'Courier New', monospace; font-size: 1rem; color: #334155; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-weight: bold; }
+        .info { margin-bottom: 40px; font-size: 1.5rem; color: #0f172a; text-align: center; height: 40px; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar" id="sidebar">
+    <h3>C Sequences (Lexical)</h3>
+</div>
+
+<div class="main-content">
+    <div class="stage">
+        <div class="monitor" id="m-status">M-Array: [0, 1, 2, 3]</div>
+        <div class="info" id="msg">Select a sequence to begin</div>
+        <div class="array-container" id="grid"></div>
+        <div id="floater-idx"></div>
+    </div>
+</div>
+
+<script>
+    // GENERATE IN LEXICOGRAPHICAL ORDER [0, c1, c2, c3]
+    const allC = [];
+    for(let c1=0; c1<=1; c1++) {
+        for(let c2=0; c2<=2; c2++) {
+            for(let c3=0; c3<=3; c3++) {
+                allC.push([0, c1, c2, c3]);
+            }
+        }
+    }
+
+    const sidebar = document.getElementById('sidebar');
+    allC.forEach((seq, idx) => {
+        const div = document.createElement('div');
+        div.className = 'c-item';
+        div.innerHTML = `<span>#${(idx+1).toString().padStart(2, '0')}</span> <span>[${seq.join(',')}]</span>`;
+        div.onclick = () => runPP(seq, div);
+        sidebar.appendChild(div);
+    });
+
+    let busy = false;
+
+    async function runPP(C, el) {
+        if (busy) return; busy = true;
+
+        document.querySelectorAll('.c-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+
+        const grid = document.getElementById('grid');
+        const msg = document.getElementById('msg');
+        const monitor = document.getElementById('m-status');
+        const fI = document.getElementById('floater-idx');
+
+        grid.innerHTML = '';
+        C.forEach((_, idx) => grid.innerHTML += `<div class="cell" id="d-${idx}"><span class="cell-idx">POS:${idx}</span></div>`);
+        
+        let M = [0, 1, 2, 3];
+        monitor.innerText = `M-ARRAY: [${M.join(', ')}]`;
+        
+        document.getElementById('d-0').innerText = C[0];
+        document.getElementById('d-0').innerHTML += `<span class="cell-idx">POS:0</span>`;
+        await sleep(1000);
+
+        for (let i = 1; i < C.length; i++) {
+            const valCi = C[i];
+            const curCell = document.getElementById(`d-${i}`);
+            const targetIdx = M[valCi];
+            const targetCell = document.getElementById(`d-${targetIdx}`);
+            const oldVal = targetCell.innerText.split('\n')[0];
+
+            // --- SYNC START ---
+            await new Promise(resolve => {
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        curCell.innerText = valCi;
+                        curCell.innerHTML += `<span class="cell-idx">POS:${i}</span>`;
+                        curCell.classList.add('is-matching', 'is-active-val');
+                        targetCell.classList.add('is-matching');
+                        msg.innerHTML = `Step ${i}: C[${i}]=${valCi} links to POS ${targetIdx}`;
+                        resolve();
+                    });
+                });
+            });
+
+            const rectS = curCell.getBoundingClientRect();
+            const rectT = targetCell.getBoundingClientRect();
+            const stageR = document.querySelector('.stage').getBoundingClientRect();
+
+            fI.innerText = i;
+            fI.style.transition = 'none';
+            fI.style.left = (rectS.left - stageR.left + 20) + 'px';
+            fI.style.top = (rectS.top - stageR.top - 100) + 'px';
+            fI.style.opacity = '1';
+            fI.style.transform = 'scale(1.5)';
+
+            await sleep(1800); 
+
+            // --- FORWARD ACTION ---
+            msg.innerHTML = `Action: D[${targetIdx}] gets index ${i}`;
+            curCell.innerText = oldVal;
+            curCell.innerHTML += `<span class="cell-idx">POS:${i}</span>`;
+            curCell.classList.add('is-final');
+
+            fI.style.transition = 'all 1.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            fI.style.left = (rectT.left - stageR.left + 20) + 'px';
+            fI.style.top = (rectT.top - stageR.top + 20) + 'px';
+            fI.style.transform = 'scale(1)';
+
+            await sleep(2000); 
+
+            // --- CLEANUP ---
+            targetCell.innerText = i;
+            targetCell.innerHTML += `<span class="cell-idx">POS:${targetIdx}</span>`;
+            targetCell.classList.add('is-final');
+            curCell.classList.remove('is-matching', 'is-active-val');
+            targetCell.classList.remove('is-matching');
+
+            M[i] = M[valCi]; M[valCi] = i;
+            monitor.innerText = `M-ARRAY: [${M.join(', ')}]`;
+            fI.style.opacity = '0';
+            await sleep(1200);
+        }
+        msg.innerHTML = `<span style="color:var(--primary)">Done! Lexical Seq ${C.join('')} Processed</span>`;
+        busy = false;
+    }
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+</script>
+</body>
+</html>
