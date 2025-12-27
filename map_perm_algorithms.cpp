@@ -1,7 +1,12 @@
 /**
- * Official Implementation of Position Method & Position Pro (PP) Algorithms
- * Author: Yusheng Hu
- * Research: A Linear-Time Generation Algorithm for Permutations
+ * @file map_perm_algorithms.cpp
+ * @brief Implementation of Linear-Time Permutation Ranking/Unranking Algorithms.
+ * * This file includes:
+ * 1. The classic Myrvold-Ruskey (MR) algorithm, as described in:
+ * Myrvold, W., & Ruskey, F. (2001). Ranking and unranking permutations in linear time.
+ * * 2. The novel Position Method and Position Pro (PP) algorithm, proposed by Yusheng Hu (2025).
+ * The PP algorithm optimizes the mapping logic derived from the MR framework.
+ * * Author: Yusheng Hu
  * Repository: https://github.com/Yusheng-Hu/Position-Pro-Algorithm
  */
 
