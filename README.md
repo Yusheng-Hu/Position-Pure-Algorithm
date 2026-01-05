@@ -13,6 +13,7 @@ Official implementation and interactive visualizations of the **Position Pro (PP
 ## 💻 Source Code
 The core C++ implementations of the algorithms can be found here:
 * **[map_perm_algorithms.cpp](./map_perm_algorithms.cpp)**: Includes `Position_unrank`, `Position_rank`, `PositionPro_unrank`, and `PositionPro_rank`.
+`permpro_full.cpp` serves as a high-performance reference implementation for generating all permutations of a set using the **PositionPro** iterative algorithm. 
 
 ## 🛠️ Usage
 These algorithms achieve $O(n)$ time complexity by optimizing the indexing logic $D[i]$, providing a more efficient alternative to the classic Myrvold-Ruskey method.
@@ -21,6 +22,34 @@ These algorithms achieve $O(n)$ time complexity by optimizing the indexing logic
 The **Position Pro (PP)** algorithm is built upon the foundational work of **Wendy Myrvold and Frank Ruskey**, specifically their $O(n)$ unranking algorithm (2001). 
 
 While the MR algorithm uses a specific swap-based approach, the PP method introduces a more intuitive indexing logic $D[i]$ that simplifies the implementation and enhances understanding of the mapping process.
+
+## PositionPro: Iterative Permutation Generation
+
+The **PositionPro** algorithm is a high-performance, iterative approach to generating all permutations of a set. By utilizing an iterative state machine rather than traditional recursion, it significantly reduces function call overhead and optimizes CPU branch prediction efficiency.
+
+### Key Features
+* **Iterative State Machine**: Eliminates recursion depth limits and stack-related performance bottlenecks.
+* **Hardware Affinity Binding**: Includes native Windows API support (`SetThreadAffinityMask`) to lock execution to a specific logical core, minimizing context-switching noise and cache misses.
+* **High-Precision Benchmarking**: Performance is measured using the Windows High-Precision Event Timer (`QueryPerformanceCounter`) for nanosecond-level accuracy.
+
+### Performance Benchmarks
+
+The following results were recorded on a single core of a mobile-class processor. Despite the modest clock speed, the algorithm maintains massive throughput, processing over a billion permutations per second.
+
+**Test Environment:**
+* **CPU**: Intel(R) Core(TM) i7-8550U @ 1.80GHz
+* **Affinity**: Bound to Core 3
+* **OS**: Windows 10/11
+* **Compiler**: GCC/MinGW with `-O3` optimization
+
+| $N$ (Size) | Total Permutations ($N!$) | Execution Time (Seconds) | Throughput (Perms/Sec) |
+| :--- | :--- | :--- | :--- |
+| **12** | 479,001,600 | **0.272373** | ~1.75 Billion |
+| **13** | 6,227,020,800 | **3.696829** | **~1.68 Billion** |
+| **14** | 87,178,291,200 | **48.328881** | ~1.80 Billion |
+
+### Analysis
+The results demonstrate exceptional instruction-level parallelism. On the i7-8550U platform, **PositionPro** consistently achieves a throughput of approximately **1.8 billion permutations per second**, showcasing near-linear scaling relative to the mathematical complexity $O(N!)$.
 
 ## 💡 Future Ideas & Extensions
 
