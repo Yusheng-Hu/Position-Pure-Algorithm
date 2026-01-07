@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18170157.svg)](https://doi.org/10.5281/zenodo.18170157)
+
 # Position Pro Algorithm
 
 Official implementation and interactive visualizations of the **Position Pro (PP)** linear-time unranking algorithm.
@@ -50,6 +52,10 @@ The following results were recorded on a single core of a mobile-class processor
 
 ### Analysis
 The results demonstrate exceptional instruction-level parallelism. On the i7-8550U platform, **PositionPro** consistently achieves a throughput of approximately **1.8 billion permutations per second**, showcasing near-linear scaling relative to the mathematical complexity $O(N!)$.
+
+### 📖 Citation
+If you use this algorithm in your research, please cite it as:
+> HU, Y. (2025). Position Method: A Linear-Time Generation Algorithm for Permutations (Version v1.0.0). GitHub Repository. DOI: 10.5281/zenodo.18170157
 
 ## 💡 Future Ideas & Extensions
 
