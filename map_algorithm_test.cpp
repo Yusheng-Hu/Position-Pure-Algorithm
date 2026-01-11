@@ -66,7 +66,7 @@ int main() {
         
         // Use identical shared_C for comparison without initialization overhead
         runAlgorithmTest("MyrvoldRuskey", MyrvoldRuskey_unrank, shared_C, n, iterations);
-        runAlgorithmTest("PositionPro", PositionPro_unrank, shared_C, n, iterations);
+        runAlgorithmTest("PositionPure", PositionPure_unrank, shared_C, n, iterations);
     }
 
     return 0;
