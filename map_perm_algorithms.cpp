@@ -1,8 +1,8 @@
 /**
- * Official Implementation of Position Method & Position Pro (PP) Algorithms
+ * Official Implementation of Position Method & Position Pure (PP) Algorithms
  * Author: Yusheng Hu
  * Research: A Linear-Time Generation Algorithm for Permutations
- * Repository: https://github.com/Yusheng-Hu/Position-Pro-Algorithm
+ * Repository: https://github.com/Yusheng-Hu/Position-Pure-Algorithm
  */
 
 #include <algorithm> // for std::swap
@@ -100,8 +100,8 @@ void Position_rank(const vector<int> &D, vector<int> &C) {
   }
 }
 
-// PositionPro unrank algorithm
-void PositionPro_unrank(const vector<int> &C, vector<int> &D) {
+// PositionPure unrank algorithm
+void PositionPure_unrank(const vector<int> &C, vector<int> &D) {
   for (int i = 0; i < C.size(); ++i) {
     const int a = C[i];
     D[i] = D[a];
@@ -109,8 +109,8 @@ void PositionPro_unrank(const vector<int> &C, vector<int> &D) {
   }
 }
 
-// PositionPro rank algorithm
-void PositionPro_rank(const vector<int> &D, vector<int> &C) {
+// PositionPure rank algorithm
+void PositionPure_rank(const vector<int> &D, vector<int> &C) {
   int n = D.size();
   C.resize(n); // Ensure C has the correct size
 
@@ -128,3 +128,4 @@ void PositionPro_rank(const vector<int> &D, vector<int> &C) {
     M[D_local[i]] = M[i];
   }
 }
+
