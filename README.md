@@ -98,9 +98,24 @@ The table below demonstrates the performance of **PositionPure (permPure_full)**
 ### Analysis
 The results demonstrate exceptional instruction-level parallelism. On the i7-8550U platform, **PositionPure** consistently achieves a throughput of approximately **1.8 billion permutations per second**, showcasing near-linear scaling relative to the mathematical complexity $O(N!)$.
 
-### 📖 Citation
-If you use this algorithm in your research, please cite it as:
-> HU, Y. (2025). Position Method: A Linear-Time Generation Algorithm for Permutations (Version v1.0.0). GitHub Repository. DOI: 10.5281/zenodo.18170157
+## 📖 Citation
+
+If you use this algorithm or implementation in your research, please cite it as follows:
+
+### APA Style
+> HU, Y. (2026). Position Method: A Linear-Time Generation Algorithm for Permutations (Version v1.0.0). GitHub Repository. DOI: [10.5281/zenodo.18170157](https://doi.org/10.5281/zenodo.18170157)
+
+### BibTeX
+```bibtex
+@software{hu_yusheng_2026_18170157,
+  author       = {Hu, Yusheng},
+  title        = {Position Method: A Linear-Time Generation Algorithm for Permutations},
+  year         = 2026,
+  publisher    = {Zenodo},
+  version      = {v1.0.0},
+  doi          = {10.5281/zenodo.18170157},
+  url          = {[https://doi.org/10.5281/zenodo.18170157](https://doi.org/10.5281/zenodo.18170157)}
+}
 
 ## 💡 Future Ideas & Extensions
 
