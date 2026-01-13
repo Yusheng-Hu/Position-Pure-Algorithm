@@ -44,10 +44,12 @@ jobs:
         echo "| Algorithm | Complexity | Execution Time | Status |" >> $GITHUB_STEP_SUMMARY
         echo "| :--- | :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
         echo "| Heap's Permutation | $O(n!)$ | \`${{ env.TIME_HEAP }} s\` | Baseline |" >> $GITHUB_STEP_SUMMARY
-        echo "| **Position-Pure (O(n))** | **$O(n)$** | **\`${{ env.TIME_PURE }} s\`** | **Optimized** |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Position-Pure** | **$O(n!)$** | **\`${{ env.TIME_PURE }} s\`** | **Optimized** |" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "#### 💻 Hardware Environment" >> $GITHUB_STEP_SUMMARY
         echo "- **CPU Model:** ${{ env.CPU_MODEL }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Platform:** Ubuntu (GitHub Cloud)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "> **Note:** Both algorithms share the same theoretical time complexity $O(n!)$. The performance gap arises from constant-factor optimizations and CPU cache efficiency." >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "✅ *Report generated successfully.*" >> $GITHUB_STEP_SUMMARY
