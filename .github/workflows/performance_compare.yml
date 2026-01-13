@@ -1,0 +1,57 @@
+name: Algorithmic Performance Comparison
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    name: Comparison Profiling
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Get CPU Hardware Info
+      # Capture the CPU model name for the benchmark report
+      run: |
+        MODEL=$(lscpu | grep "Model name" | cut -d':' -f2 | xargs)
+        echo "CPU_MODEL=$MODEL" >> $GITHUB_ENV
+
+    - name: Compile Both Algorithms
+      # Use -O3 optimization and -pthread for Linux affinity support
+      run: |
+        g++ -O3 -std=c++11 heap_perm.cpp -o heap_test -pthread
+        g++ -O3 -std=c++11 permpure_full.cpp -o pure_test -pthread
+
+    - name: Execute and Capture Results
+      # Run both programs and extract time data into variables
+      run: |
+        # Run Heap's Algorithm and capture the line containing time info
+        ./heap_test > heap_out.txt
+        TIME_HEAP=$(grep "heap_perm" heap_out.txt | awk '{print $3}' || echo "N/A")
+        
+        # Run Position-Pure Algorithm and capture the line containing time info
+        ./pure_test > pure_out.txt
+        TIME_PURE=$(grep "permpure_full" pure_out.txt | awk '{print $3}' || echo "N/A")
+        
+        # Store for the next step
+        echo "TIME_HEAP=$TIME_HEAP" >> $GITHUB_ENV
+        echo "TIME_PURE=$TIME_PURE" >> $GITHUB_ENV
+
+    - name: Generate Combined Summary Report
+      # Create a professional Markdown table in GitHub Actions Summary
+      run: |
+        echo "### 🚀 Algorithmic Comparison Report (N=12)" >> $GITHUB_STEP_SUMMARY
+        echo "| Algorithm | Complexity | Execution Time | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "| :--- | :--- | :--- | :--- |" >> $GITHUB_STEP_SUMMARY
+        echo "| Heap's Permutation | $O(n!)$ | \`${{ env.TIME_HEAP }} s\` | Baseline |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Position-Pure (O(n))** | **$O(n)$** | **\`${{ env.TIME_PURE }} s\`** | **Optimized** |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "#### 💻 Hardware Environment" >> $GITHUB_STEP_SUMMARY
+        echo "- **CPU Model:** ${{ env.CPU_MODEL }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Operating System:** Ubuntu Latest (GitHub Hosted)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Compiler:** G++ -O3" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ *This report was automatically generated for performance verification.*" >> $GITHUB_STEP_SUMMARY
