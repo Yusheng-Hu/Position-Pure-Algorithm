@@ -28,7 +28,8 @@ jobs:
         echo "=========================================="
 
     - name: Compile heap_perm.cpp
-      run: g++ -O3 heap_perm.cpp -o heap_perm_test
+        # Added -pthread for Linux CPU affinity support
+        run: g++ -O3 heap_perm.cpp -o heap_perm_test -pthread
 
     - name: Execution and Performance Profiling
       # If your code requires manual input, it might hang. 
