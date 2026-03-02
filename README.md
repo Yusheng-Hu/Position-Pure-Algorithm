@@ -102,13 +102,16 @@ At the request of Reddit users and other community members, a performance compar
 
 [//]: # (PYTHON_PP_ITER_BENCHMARK_INTEL_START)
 
-**Last Run:** Fri Feb 06 05:40:44 2026 UTC / Fri Feb 06 13:40:44 2026 (UTC+8)
+**Last Run:** Mon Mar 02 02:33:27 2026 UTC / Mon Mar 02 10:33:27 2026 (UTC+8)
 **Environment:** Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz (GitHub Actions Runner)
 
 | N | Total Permutations | Itertools (s) | Position Pure (s) | Speed-up |
 | :--- | :--- | :--- | :--- | :--- |
-| 10 | 3,628,800 | 0.1513s | 0.1334s | **1.13x** |
-| 11 | 39,916,800 | 2.0003s | 1.0969s | **1.82x** |
+| 10 | 3,628,800 | 0.1143s | 0.0764s | **1.50x** |
+| 11 | 39,916,800 | 1.1867s | 0.5373s | **2.21x** |
+| 12 | 479,001,600 | 14.3020s | 5.8797s | **2.43x** |
+| 13 | 6,227,020,800 | 191.1971s | 74.4842s | **2.57x** |
+| 14 | 87,178,291,200 | 2890.1775s | 1108.1700s | **2.61x** |
 
 [//]: # (PYTHON_PP_ITER_BENCHMARK_INTEL_END)
 
