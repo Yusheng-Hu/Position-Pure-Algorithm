@@ -212,6 +212,11 @@ If you use this algorithm or implementation in your research, please cite it as 
 
 ```
 
+```
+Hu, Yusheng, Position Method: A Linear-Time Generation Algorithm for Permutations (February 22, 2026). Available at SSRN:
+https://ssrn.com/abstract=6285581 or http://dx.doi.org/10.2139/ssrn.6285581
+```
+
 ## 💡 Future Ideas & Extensions
 
 ### 1. Zero-Memory "Lazy" Permutation
