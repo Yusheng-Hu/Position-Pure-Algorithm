@@ -47,16 +47,16 @@ The algorithm utilizes an **iterative state machine** to eliminate recursion ove
 
 [//]: # (UNIQUE_PP_ALGO_BENCHMARK_AMD_START)
 
-**Last Run:** Sun Mar 22 15:47:07 2026 UTC / Sun Mar 22 23:47:07 2026 (UTC+8)
+**Last Run:** Fri May 08 15:40:29 2026 UTC / Fri May 08 23:40:29 2026 (UTC+8)
 **Environment:** AMD EPYC 7763 64-Core Processor (GitHub Actions Runner)
 
 | N | Heap (s) | PP (s) | Speedup |
 |---|---|---|---|
-| 9 | 0.005835 | 0.000872 | 6.69x |
-| 10 | 0.058110 | 0.006333 | 9.17x |
-| 11 | 0.645997 | 0.074552 | 8.66x |
-| 12 | 7.875811 | 0.717375 | 10.97x |
-| 13 | 103.665415 | 8.623447 | 12.02x |
+| 9 | 0.005753 | 0.000632 | 9.10x |
+| 10 | 0.059474 | 0.006454 | 9.21x |
+| 11 | 0.648535 | 0.064187 | 10.10x |
+| 12 | 7.634664 | 0.707448 | 10.79x |
+| 13 | 101.130642 | 8.450858 | 11.96x |
 
 [//]: # (UNIQUE_PP_ALGO_BENCHMARK_AMD_END)
 
