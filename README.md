@@ -90,16 +90,16 @@ At the request of Reddit users and other community members, a performance compar
 
 [//]: # (PYTHON_PP_ITER_BENCHMARK_AMD_START)
 
-**Last Run:** Fri Apr 10 09:10:11 2026 UTC / Fri Apr 10 17:10:11 2026 (UTC+8)
-**Environment:** AMD EPYC 7763 64-Core Processor (GitHub Actions Runner)
+**Last Run:** Mon May 11 11:41:27 2026 UTC / Mon May 11 19:41:27 2026 (UTC+8)
+**Environment:** AMD EPYC 9V74 80-Core Processor (GitHub Actions Runner)
 
 | N | Total Permutations | Itertools (s) | Position Pure (s) | Speed-up |
 | :--- | :--- | :--- | :--- | :--- |
-| 10 | 3,628,800 | 0.1091s | 0.0673s | **1.62x** |
-| 11 | 39,916,800 | 1.2195s | 0.5968s | **2.04x** |
-| 12 | 479,001,600 | 15.1746s | 6.6016s | **2.30x** |
-| 13 | 6,227,020,800 | 202.0510s | 84.4540s | **2.39x** |
-| 14 | 87,178,291,200 | 2902.5558s | 1186.1069s | **2.45x** |
+| 10 | 3,628,800 | 0.0862s | 0.0537s | **1.60x** |
+| 11 | 39,916,800 | 0.9966s | 0.4571s | **2.18x** |
+| 12 | 479,001,600 | 12.4014s | 5.2005s | **2.38x** |
+| 13 | 6,227,020,800 | 168.1315s | 69.1447s | **2.43x** |
+| 14 | 87,178,291,200 | 2370.9107s | 1252.8360s | **1.89x** |
 
 [//]: # (PYTHON_PP_ITER_BENCHMARK_AMD_END)
 
