@@ -1,0 +1,36 @@
+name: DPP Performance Benchmark
+
+# Trigger the workflow on pushes to the specific file or manual dispatch
+on:
+  push:
+    paths:
+      - 'Position-Pure-Algorithm/FullPermutation/permpure_dpp.cpp'
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # Set working directory to the target source folder
+        working-directory: Position-Pure-Algorithm/FullPermutation
+    
+    steps:
+      # Checkout the repository content
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Compile the engine with optimization flags for high performance
+      - name: Compile permpure_dpp
+        run: |
+          g++ -O3 -march=native permpure_dpp.cpp -o permpure_dpp -lpthread
+
+      # Execute benchmark for N=9 to 13 and filter the report output
+      - name: Run Benchmark (N=9 to 13)
+        run: |
+          echo "Starting DPP Performance Benchmark..."
+          for n in {9..13}; do
+            echo "--- Benchmarking N=$n ---"
+            # Execute the binary and extract relevant performance metrics
+            ./permpure_dpp $n | grep -E "ALGORITHM|N_VALUE|EXECUTION_TIME"
+          done
