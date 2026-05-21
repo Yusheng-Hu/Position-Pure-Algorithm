@@ -1,23 +1,54 @@
-- name: Compile and Run Benchmark
+name: DPP Performance Benchmark
+
+# Trigger the workflow on pushes to the specific file or manual dispatch
+on:
+  push:
+    paths:
+      - '**/permpure_dpp.cpp'
+  workflow_dispatch:
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Checkout the repository content
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Compile and run the benchmark with summary output
+      - name: Compile and Run Benchmark
         run: |
-          # Dynamically locate the directory
+          # 1. Dynamically locate the directory containing the source file
           TARGET_DIR=$(find . -name "permpure_dpp.cpp" -exec dirname {} \;)
+          
+          if [ -z "$TARGET_DIR" ]; then
+            echo "Error: permpure_dpp.cpp not found!"
+            exit 1
+          fi
+          
+          echo "Found source in: $TARGET_DIR"
           cd "$TARGET_DIR"
           
-          # Compile
+          # 2. Compile the engine with optimization flags
           g++ -O3 -march=native permpure_dpp.cpp -o permpure_dpp -lpthread
           
-          # Prepare the Markdown table header
-          echo "| N Value | Execution Time (s) |" >> $GITHUB_STEP_SUMMARY
-          echo "|:-------:|:------------------:|" >> $GITHUB_STEP_SUMMARY
+          # 3. Create the Markdown table header in the GitHub Action Summary
+          {
+            echo "### DPP Performance Results"
+            echo "| N Value | Execution Time (s) |"
+            echo "|:-------:|:------------------:|"
+          } >> $GITHUB_STEP_SUMMARY
           
-          # Run Benchmark and format output into the summary table
+          # 4. Run Benchmark for N=9 to 13 and populate the table
           echo "Starting DPP Performance Benchmark..."
           for n in {9..13}; do
-            # Extract only the time value
-            TIME_VAL=$(./permpure_dpp $n | grep "EXECUTION_TIME" | awk -F': ' '{print $2}')
+            # Execute and capture the execution time
+            # Assuming output format is "EXECUTION_TIME: <value>"
+            RESULT=$(./permpure_dpp $n)
+            TIME_VAL=$(echo "$RESULT" | grep "EXECUTION_TIME" | awk -F': ' '{print $2}')
             
-            # Append row to the summary table
+            # Append formatted row to the GitHub Action Summary table
             echo "| $n | $TIME_VAL |" >> $GITHUB_STEP_SUMMARY
-            echo "Finished N=$n in ${TIME_VAL}s"
+            echo "Benchmark for N=$n complete: ${TIME_VAL}s"
           done
