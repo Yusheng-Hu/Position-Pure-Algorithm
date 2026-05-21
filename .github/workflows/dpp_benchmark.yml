@@ -3,33 +3,36 @@ name: DPP Performance Benchmark
 on:
   push:
     paths:
-      - 'Position-Pure-Algorithm/FullPermutation/permpure_dpp.cpp'
+      - '**/permpure_dpp.cpp'
   workflow_dispatch:
 
 jobs:
   benchmark:
     runs-on: ubuntu-latest
     
-    # Corrected path: GitHub Actions clones into the repository name by default.
-    # If the repo is 'Position-Pure-Algorithm', the root is '.', 
-    # so we step into the subdirectories from there.
-    defaults:
-      run:
-        working-directory: Position-Pure-Algorithm/FullPermutation
-    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Compile permpure_dpp
+      - name: Compile and Run Benchmark
         run: |
-          # Verify current path first to debug
-          pwd
-          ls -F
+          # Find the directory containing the file dynamically
+          TARGET_DIR=$(find . -name "permpure_dpp.cpp" -exec dirname {} \;)
+          
+          if [ -z "$TARGET_DIR" ]; then
+            echo "Error: permpure_dpp.cpp not found!"
+            exit 1
+          fi
+          
+          echo "Found source in: $TARGET_DIR"
+          cd "$TARGET_DIR"
+          
+          # Compile
           g++ -O3 -march=native permpure_dpp.cpp -o permpure_dpp -lpthread
-
-      - name: Run Benchmark (N=9 to 13)
-        run: |
+          
+          # Run Benchmark
+          echo "Starting DPP Performance Benchmark..."
           for n in {9..13}; do
+            echo "--- Benchmarking N=$n ---"
             ./permpure_dpp $n | grep -E "ALGORITHM|N_VALUE|EXECUTION_TIME"
           done
