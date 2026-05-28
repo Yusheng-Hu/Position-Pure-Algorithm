@@ -181,6 +181,24 @@ At the request of Reddit users and other community members, a performance compar
 
 [//]: # (INDUSTRIAL_PERFORMANCE_BENCHMARK_DATA_SECTION_INTEL_END)
 
+### Dual Position Pure (DPP) Algorithm
+
+**DPP (Dual Position Pure)** is a high-performance algorithm for full permutation generation, designed for modern processor architectures. By utilizing a **dual-ring topology** and **spatial decoupling**, it shifts the generation paradigm from local swaps to structured construction, compressing control overhead to an $(n-1)$ dimensional subspace.
+
+#### Performance Benchmarks
+The following table shows the execution time (in seconds) for generating all permutations of order $N$:
+
+| $N$ (Order) | Execution Time (s) |
+| :---: | :---: |
+| 9 | 0.000142 |
+| 10 | 0.001212 |
+| 11 | 0.011577 |
+| 12 | 0.123500 |
+| 13 | 1.431980 |
+
+*Note: Benchmarks conducted on standard GitHub-hosted runners with `-O3` optimization.*
+
+---
 
 ## 💻 Source Code
 The core C++ implementations of the algorithms can be found here:
