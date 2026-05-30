@@ -108,7 +108,8 @@ int main(int argc, char* argv[]) {
             // Reduced I/O overhead using LITTLE_NUMBER check
             if (inner_perm_size <= LITTLE_NUMBER) {
                 printf("\n");
-                //这个地方要连续输出n个。从jj=0开始的数组，到jj=inner_perm_size-1开始的数组
+                // This section requires the consecutive output of n items—specifically, 
+                //the arrays ranging from jj=0 up to jj=inner_perm_size-1.
                 for (int jj = 0; jj < inner_perm_size+1; jj++) {         
                     printf("\n");
                     for (int kk = 0; kk < inner_perm_size+1; kk++) {
