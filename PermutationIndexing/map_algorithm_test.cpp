@@ -108,11 +108,11 @@ int main() {
          << setw(15) << "MR (ns/it)" << setw(15) << "PP (ns/it)" << "Speedup" << endl;
     cout << "------------------------------------------------------------------" << endl;
 
-    vector<int> sizes = {1000, 100000, 1000000};
+    vector<int> sizes = {1000000, 10000000, 100000000};
     vector<string> dists = {"Random", "Sorted", "Reverse"};
 
     for (int n : sizes) {
-        int its = (n <= 1000) ? 10000 : (n <= 100000 ? 500 : 50);
+        int its = (n <= 1000) ? 10000 : (n <= 100000 ? 5 : 1);
         
         for (const auto& d : dists) {
             double t_mr = measure_speed(MR_unrank, n, its, d);
