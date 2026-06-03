@@ -117,24 +117,19 @@ void PositionPure_rank(const vector<int> &D, vector<int> &C) {
   static vector<int> M;
   if (M.size() < (size_t)n) M.resize(n);
 
-  // 1. 唯一的一次全量拷贝与映射建立
   for (int i = 0; i < n; ++i) {
       const int val = D[i];
       C[i] = val;
       M[val] = i;
   }
 
-  // 2. 纯粹的单步循环还原
   for (int i = n - 1; i >= 0; --i) {
-      // 利用寄存器锁定变量，减少内存 load 次数
       const int target_pos = M[i];
       const int val_at_i = C[i];
 
-      // 核心交换与映射维护
       C[target_pos] = val_at_i;
       M[val_at_i] = target_pos;
       
-      // 产出结果
       C[i] = target_pos;
   }
 }
