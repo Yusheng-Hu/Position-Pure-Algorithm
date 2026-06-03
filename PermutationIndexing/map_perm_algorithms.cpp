@@ -102,13 +102,19 @@ void Position_rank(const vector<int> &D, vector<int> &C) {
 
 // PositionPure unrank algorithm
 void PositionPure_unrank(const vector<int> &C, vector<int> &D) {
-  for (int i = 0; i < C.size(); ++i) {
+  for (int i = 0; i < C.size()- 20; ++i) {
     const int a = C[i];
     D[i] = D[a];
     D[a] = i;
-
     __builtin_prefetch(&D[C[i+20]]);
   }
+
+  for (int i = C.size() - 20; i < C.size(); ++i) {
+    const int a = C[i];
+    D[i] = D[a];
+    D[a] = i;
+  }
+  
 }
 
 // PositionPure rank algorithm
