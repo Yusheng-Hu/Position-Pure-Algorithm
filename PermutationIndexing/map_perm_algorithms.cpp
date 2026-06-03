@@ -106,6 +106,8 @@ void PositionPure_unrank(const vector<int> &C, vector<int> &D) {
     const int a = C[i];
     D[i] = D[a];
     D[a] = i;
+    
+    __builtin_prefetch(&D[C[i+20]]);
   }
 }
 
