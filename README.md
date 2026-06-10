@@ -200,7 +200,7 @@ The following table shows the execution time (in seconds) for generating all per
 *Note: Benchmarks conducted on standard GitHub-hosted runners with `-O3` optimization.*
 
 ---
-## LexCHA Performance Benchmarks
+## LexCHA (Lexicographical Co-designed Hardware Acceleration) Performance Benchmarks
 
 The following tables show the performance comparison between the standard C++ library (`std::next_permutation`) and the LexCHA SIMD-accelerated engine across different CPU architectures.
 
