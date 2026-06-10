@@ -1,8 +1,12 @@
 name: LexCHA Benchmark
+
+# Trigger the workflow on pushes to the specific file or manual dispatch
 on:
   push:
     paths:
       - '**/LexCHA.cpp'  
+  workflow_dispatch:
+
 jobs:
   benchmark:
     runs-on: ubuntu-latest
