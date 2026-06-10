@@ -13,25 +13,32 @@
 #include <vector>
 #include <iomanip>
 #include <immintrin.h>
+#include <array>
+#include <cstring> 
 
 // ── Architecture Configuration ───────────────────────────────────────
 constexpr int TAIL_DEPTH = 5;
-constexpr int TAIL_FACT = 120;
 constexpr int FLAT_STEPS = 119;
 constexpr int XMM_LANES = 16;
-constexpr double NS_PER_MS = 1000000.0;
 
+// Align to 16 bytes for SIMD operations
 alignas(16) uint8_t flat_lut_N5[FLAT_STEPS][XMM_LANES];
 
 // ── 1. Precompute: SIMD blind-shuffle masks ───────────────────────────
 void precompute_only_flat_lut_N5() {
-    uint8_t P[TAIL_DEPTH];
+    std::array<uint8_t, TAIL_DEPTH> P;
     for (int i = 0; i < TAIL_DEPTH; ++i) P[i] = i;
+
     for (int step = 0; step < FLAT_STEPS; ++step) {
-        uint8_t M[TAIL_DEPTH];
+        std::array<uint8_t, TAIL_DEPTH> M;
         for (int j = 0; j < TAIL_DEPTH; ++j) M[P[j]] = j;
-        std::next_permutation(P, P + TAIL_DEPTH);
-        for (int i = 0; i < TAIL_DEPTH; ++i) flat_lut_N5[step][i] = M[P[i]];
+        
+        std::next_permutation(P.begin(), P.end());
+        
+        std::memset(flat_lut_N5[step], 0, XMM_LANES);
+        for (int i = 0; i < TAIL_DEPTH; ++i) {
+            flat_lut_N5[step][i] = M[P[i]];
+        }
     }
 }
 
@@ -40,28 +47,33 @@ unsigned long long benchmark_accelerated(int N) {
     std::vector<int> D(N);
     for(int i = 0; i < N; ++i) D[i] = i;
     
-    // p_reg holds only the last TAIL_DEPTH elements of the permutation
-    __m128i p_reg = _mm_loadu_si128((__m128i*)&D[N - TAIL_DEPTH]);
+    // Increased buffer size to 32 bytes to safely hold 20 bytes (5 ints) 
+    // while maintaining 16-byte alignment for SIMD operations.
+    alignas(16) uint8_t buffer[32] = {0}; 
+    
+    // Copy the last TAIL_DEPTH elements safely
+    std::memcpy(buffer, &D[N - TAIL_DEPTH], TAIL_DEPTH * sizeof(int));
+    __m128i p_reg = _mm_load_si128((__m128i*)buffer);
 
     unsigned long long total_count = 1;
     unsigned long long max_perms = 1;
     for(int i = 1; i <= N; ++i) max_perms *= i;
 
-        while (total_count < max_perms) {
-        // [SIMD blind-shuffle path]: execute 119 fast state transitions
+    while (total_count < max_perms) {
         for (int step = 0; step < FLAT_STEPS; ++step) {
-            __m128i mask = _mm_loadu_si128((__m128i*)flat_lut_N5[step]);
+            __m128i mask = _mm_load_si128((__m128i*)flat_lut_N5[step]);
             p_reg = _mm_shuffle_epi8(p_reg, mask);
         }
         total_count += FLAT_STEPS;
 
-        // [Sync & jump]: write register state back to memory, call next_permutation for block boundary
-        _mm_storeu_si128((__m128i*)&D[N - TAIL_DEPTH], p_reg);
+        // Store back to aligned buffer
+        _mm_store_si128((__m128i*)buffer, p_reg);
+        std::memcpy(&D[N - TAIL_DEPTH], buffer, TAIL_DEPTH * sizeof(int));
         
         if (std::next_permutation(D.begin(), D.end())) {
             total_count++;
-            // Reload the next block's initial state from memory into register
-            p_reg = _mm_loadu_si128((__m128i*)&D[N - TAIL_DEPTH]);
+            std::memcpy(buffer, &D[N - TAIL_DEPTH], TAIL_DEPTH * sizeof(int));
+            p_reg = _mm_load_si128((__m128i*)buffer);
         }
     }
     return total_count;
@@ -77,48 +89,27 @@ unsigned long long benchmark_std(int N) {
 }
 
 // ── 4. Main driver ───────────────────────────────────────────────────
-int main() {
-    constexpr int TRIAL_N[] = {10, 11, 12, 13};
+int main(int argc, char* argv[]) {
+    if (argc < 2) return 1;
+    int N = std::atoi(argv[1]);
+    
     precompute_only_flat_lut_N5();
 
-    std::cout << std::fixed << std::setprecision(4);
-    std::cout << "================================================================================\n";
-    std::cout << "  Permutation Algorithm Benchmark — Time & Per-Permutation Cost\n";
-    std::cout << "================================================================================\n\n";
-    std::cout << std::setw(4) << "N"
-              << std::setw(12) << "Std(s)" << std::setw(12) << "Acc(s)"
-              << std::setw(14) << "Std ns/perm" << std::setw(14) << "Acc ns/perm"
-              << std::setw(12) << "Speedup" << std::endl;
-    std::cout << std::string(68, '-') << std::endl;
+    auto s1 = std::chrono::high_resolution_clock::now();
+    unsigned long long c1 = benchmark_std(N);
+    auto e1 = std::chrono::high_resolution_clock::now();
 
-    for (int N : TRIAL_N) {
-        auto s1 = std::chrono::high_resolution_clock::now();
-        unsigned long long c1 = benchmark_std(N);
-        auto e1 = std::chrono::high_resolution_clock::now();
+    auto s2 = std::chrono::high_resolution_clock::now();
+    unsigned long long c2 = benchmark_accelerated(N);
+    auto e2 = std::chrono::high_resolution_clock::now();
 
-        auto s2 = std::chrono::high_resolution_clock::now();
-        unsigned long long c2 = benchmark_accelerated(N);
-        auto e2 = std::chrono::high_resolution_clock::now();
+    double d1 = std::chrono::duration<double>(e1 - s1).count();
+    double d2 = std::chrono::duration<double>(e2 - s2).count();
 
-        double d1 = std::chrono::duration<double>(e1 - s1).count();
-        double d2 = std::chrono::duration<double>(e2 - s2).count();
-        double ns_per_perm_std = (d1 * 1e9) / c1;
-        double ns_per_perm_acc = (d2 * 1e9) / c2;
-
-        std::cout << std::setw(4) << N
-                  << std::setw(12) << d1 << std::setw(12) << d2
-                  << std::setw(14) << ns_per_perm_std << std::setw(14) << ns_per_perm_acc
-                  << std::setw(11) << std::setprecision(2) << d1/d2 << "x"
-                  << std::setprecision(4) << std::endl;
-    }
-
-    std::cout << "\n================================================================================\n";
-    std::cout << "  Analysis:\n";
-    std::cout << "  - Acc ns/perm is stable across N: the SIMD blind-shuffle path\n";
-    std::cout << "    operates in constant time per permutation regardless of N.\n";
-    std::cout << "  - std::next_permutation ns/perm varies with N due to cache\n";
-    std::cout << "    warmup effects (better locality at larger N reduces penalty).\n";
-    std::cout << "================================================================================\n";
+    // Output formatted row: N, Std(s), Acc(s), Std_ns/perm, Acc_ns/perm, Speedup
+    std::cout << N << " " << d1 << " " << d2 << " " 
+              << (d1 * 1e9) / c1 << " " << (d2 * 1e9) / c2 << " " 
+              << d1/d2 << "x" << std::endl;
 
     return 0;
 }
