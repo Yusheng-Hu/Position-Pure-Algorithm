@@ -12,8 +12,9 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Compile and Run Benchmark
+      # Use working-directory to ensure all commands run inside the correct folder
+      working-directory: ./FullPermutation
       run: |
-        cd FullPermutation
         # 1. Compile the C++ source with O3 optimization
         g++ -O3 LaxCHA.cpp -o LaxCHA
         
@@ -23,9 +24,6 @@ jobs:
         
         # 3. Loop through N values, run the binary, and append rows to the summary
         for n in 10 11 12 13; do
-            # Execute binary, extract the last line of output, and format as a Markdown table row
+            # Execute binary, extract the last line of output, and format
             ./LaxCHA "$n" | tail -n 1 | awk '{printf "| %s | %s | %s | %s | %s | %s |\n", $1, $2, $3, $4, $5, $6}' >> $GITHUB_STEP_SUMMARY
         done
-        
-        # Display the generated summary in the logs for debugging
-        cat $GITHUB_STEP_SUMMARY
