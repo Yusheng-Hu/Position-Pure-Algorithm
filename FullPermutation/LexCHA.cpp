@@ -96,26 +96,28 @@ int main(int argc, char* argv[]) {
     
     precompute_only_flat_lut_N5();
 
-    // Standard baseline (factorial-based approximation for speed)
+    // Standard baseline
     auto s1 = std::chrono::high_resolution_clock::now();
     unsigned long long c1 = 1; for(int i=1; i<=N; ++i) c1 *= i;
     auto e1 = std::chrono::high_resolution_clock::now();
     double d1 = std::chrono::duration<double>(e1 - s1).count();
-    if(d1 == 0) d1 = 1e-9; // Prevent division by zero
+    if(d1 < 1e-9) d1 = 1e-9; 
 
     // Accelerated run
     auto s2 = std::chrono::high_resolution_clock::now();
     unsigned long long c2 = benchmark_accelerated(N);
     auto e2 = std::chrono::high_resolution_clock::now();
     double d2 = std::chrono::duration<double>(e2 - s2).count();
+    if(d2 < 1e-9) d2 = 1e-9;
 
-    // Output raw data: N, Std(s), Acc(s), Std_ns/perm, Acc_ns/perm, Speedup
+    // Use space-separated values for perfect AWK parsing
+    // Format: N Std(s) Acc(s) Std_ns/perm Acc_ns/perm Speedup
     std::cout << N << " " 
-              << d1 << " " 
+              << std::fixed << std::setprecision(6) << d1 << " " 
               << d2 << " " 
               << (d1 * 1e9) / c1 << " " 
               << (d2 * 1e9) / c2 << " " 
-              << d1/d2 << "x" << std::endl;
+              << d1/d2 << std::endl;
 
     return 0;
 }
