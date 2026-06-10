@@ -1,0 +1,31 @@
+name: LaxCHA Benchmark
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Compile and Run Benchmark
+      run: |
+        cd FullPermutation
+        # 1. Compile the C++ source with O3 optimization
+        g++ -O3 LaxCHA.cpp -o LaxCHA
+        
+        # 2. Initialize the Markdown table header in the Job Summary
+        echo "| N | Std(s) | Acc(s) | Std ns/perm | Acc ns/perm | Speedup |" >> $GITHUB_STEP_SUMMARY
+        echo "|---|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+        
+        # 3. Loop through N values, run the binary, and append rows to the summary
+        for n in 10 11 12 13; do
+            # Execute binary, extract the last line of output, and format as a Markdown table row
+            ./LaxCHA "$n" | tail -n 1 | awk '{printf "| %s | %s | %s | %s | %s | %s |\n", $1, $2, $3, $4, $5, $6}' >> $GITHUB_STEP_SUMMARY
+        done
+        
+        # Display the generated summary in the logs for debugging
+        cat $GITHUB_STEP_SUMMARY
