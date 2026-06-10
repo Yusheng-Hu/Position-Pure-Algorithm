@@ -2,7 +2,7 @@ name: LaxCHA Benchmark
 on:
   push:
     paths:
-      - '**/LexCHA.cpp.cpp'  
+      - '**/LexCHA.cpp'  
 jobs:
   benchmark:
     runs-on: ubuntu-latest
