@@ -18,8 +18,8 @@ jobs:
       # Use working-directory to ensure all commands run inside the correct folder
       working-directory: ./FullPermutation
       run: |
-        # 1. Compile the C++ source with O3 optimization
-        g++ -O3 LexCHA.cpp -o LexCHA
+        # 1. Compile the C++ source with O3 and march=native for SIMD support
+        g++ -O3 -march=native LexCHA.cpp -o LexCHA
         
         # 2. Initialize the Markdown table header in the Job Summary
         echo "| N | Std(s) | Acc(s) | Std ns/perm | Acc ns/perm | Speedup |" >> $GITHUB_STEP_SUMMARY
