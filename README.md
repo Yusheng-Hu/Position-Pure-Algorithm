@@ -200,6 +200,33 @@ The following table shows the execution time (in seconds) for generating all per
 *Note: Benchmarks conducted on standard GitHub-hosted runners with `-O3` optimization.*
 
 ---
+## LexCHA Performance Benchmarks
+
+The following tables show the performance comparison between the standard C++ library (`std::next_permutation`) and the LexCHA SIMD-accelerated engine across different CPU architectures.
+
+### Environment 1: Cloud VM (GitHub Actions / AMD EPYC)
+* **Compiler:** `g++ -O3 -march=native -std=c++17`
+* **Target:** Strict byte-level vectorization (`_mm_shuffle_epi8`)
+
+| N | Std (s) | Acc (s) | Std (ns/perm) | Acc (ns/perm) | Speedup |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **10** | 0.011107 | 0.002524 | 3.060918 | 0.695410 | **4.40x** |
+| **11** | 0.118945 | 0.027397 | 2.979828 | 0.686353 | **4.34x** |
+| **12** | 1.422392 | 0.329176 | 2.969494 | 0.687213 | **4.32x** |
+| **13** | 18.484087 | 4.282182 | 2.968368 | 0.687677 | **4.32x** |
+
+### Environment 2: Local Host (Intel Core Architecture)
+* **Compiler:** `g++ -O3 -march=native -std=c++17`
+* **Advantage:** Dedicated Intel shuffle ports and optimal Store-to-Load Forwarding (STLF).
+
+| N | Std (s) | Acc (s) | Std (ns/perm) | Acc (ns/perm) | Speedup |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **10** | 0.013980 | 0.001881 | 3.852431 | 0.518463 | **7.43x** |
+| **11** | 0.150596 | 0.021415 | 3.772737 | 0.536486 | **7.03x** |
+| **12** | 1.783026 | 0.255463 | 3.722380 | 0.533324 | **6.98x** |
+| **13** | 22.455285 | 3.312170 | 3.606104 | 0.531903 | **6.78x** |
+
+---
 
 ## 💻 Source Code
 The core C++ implementations of the algorithms can be found here:
