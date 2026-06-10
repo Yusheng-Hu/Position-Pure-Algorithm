@@ -2,7 +2,7 @@
  * Official Implementation of LexCHA Indexing Algorithms
  * Author: Yusheng Hu
  * Research: A Divide-and-Conquer Engine for Lexicographical Permutations
- * * Note: Added <cstdint> to resolve compilation errors regarding uint8_t.
+ * * Note: Added <chrono> to resolve time-related compilation errors.
  */
 
 #include <iostream>
@@ -12,6 +12,7 @@
 #include <cstring>
 #include <algorithm>
 #include <cstdint> // Required for uint8_t
+#include <chrono>  // Required for std::chrono
 
 // ── Architecture Configuration ───────────────────────────────────────
 constexpr int TAIL_DEPTH = 5;
@@ -57,6 +58,7 @@ unsigned long long benchmark_accelerated(int N) {
     std::vector<int> D(N);
     for(int i = 0; i < N; ++i) D[i] = i;
     
+    // Aligned buffer to ensure safe memory access for SIMD
     alignas(16) uint8_t buffer[32] = {0}; 
     std::memcpy(buffer, &D[N - TAIL_DEPTH], TAIL_DEPTH * sizeof(int));
     __m128i p_reg = _mm_load_si128((__m128i*)buffer);
