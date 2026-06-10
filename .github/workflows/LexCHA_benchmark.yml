@@ -1,9 +1,8 @@
 name: LaxCHA Benchmark
-
 on:
   push:
-    branches: [ "main" ]
-
+    paths:
+      - '**/permpure_dpp.cpp'  
 jobs:
   benchmark:
     runs-on: ubuntu-latest
