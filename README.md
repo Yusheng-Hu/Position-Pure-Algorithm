@@ -208,12 +208,12 @@ The following tables show the performance comparison between the standard C++ li
 * **Compiler:** `g++ -O3 -march=native -std=c++17`
 * **Target:** Strict byte-level vectorization (`_mm_shuffle_epi8`)
 
-| N | Std (s) | Acc (s) | Std (ns/perm) | Acc (ns/perm) | Speedup |
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| **10** | 0.011107 | 0.002524 | 3.060918 | 0.695410 | **4.40x** |
-| **11** | 0.118945 | 0.027397 | 2.979828 | 0.686353 | **4.34x** |
-| **12** | 1.422392 | 0.329176 | 2.969494 | 0.687213 | **4.32x** |
-| **13** | 18.484087 | 4.282182 | 2.968368 | 0.687677 | **4.32x** |
+| N | Std(s) | Acc(s) | Std ns/perm | Acc ns/perm | Speedup |
+|---|---|---|---|---|---|
+| 10 | 0.031685 | 0.004391 | 8.731513 | 1.210073 | **7.215691** |
+| 11 | 0.357150 | 0.048634 | 8.947350 | 1.218396 | **7.343546** |
+| 12 | 4.486271 | 0.589570 | 9.365879 | 1.230830 | **7.609399** |
+| 13 | 60.799209 | 7.572245 | 9.763772 | 1.216030 | **8.029219** |
 
 ### Environment 2: Local Host (Intel Core Architecture)
 * **Compiler:** `g++ -O3 -march=native -std=c++17`
