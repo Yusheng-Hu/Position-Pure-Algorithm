@@ -46,8 +46,7 @@ The **PositionPure** algorithm is a high-performance, iterative approach to gene
 The algorithm utilizes an **iterative state machine** to eliminate recursion overhead and leverages **hardware affinity binding** via the Windows API to minimize context-switching noise, with performance verified to nanosecond-level accuracy through **high-precision benchmarking**.
 
 20260703: 
-The efficiency of the Heaps algorithm was underestimated due to oversight in the checksum check. Therefore, the pp performance has been corrected to speedup 1.X.
-**By using a pre-compiled N, the Position Pure algorithm can achieve a speedup of approximately 6 times compared to the Heaps algorithm. I will modify it very soon.**
+The efficiency of the Heaps algorithm was underestimated due to oversight in the checksum check. Therefore, the pp performance has been corrected to speedup 1.X. But Heap’s algorithm can also be optimized. **need check very soon.**
 
 [//]: # (UNIQUE_PP_ALGO_BENCHMARK_AMD_START)
 
