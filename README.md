@@ -62,17 +62,19 @@ The algorithm utilizes an **iterative state machine** to eliminate recursion ove
 
 [//]: # (UNIQUE_PP_ALGO_BENCHMARK_INTEL_START)
 
+
+** Err: need correct because find heaps checksum code err for more cost
 **Last Run:** Fri Feb 06 07:20:50 2026 UTC / Fri Feb 06 15:20:50 2026 (UTC+8)
 **Environment:** Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz (GitHub Actions Runner)
 
 | N | Heap (s) | PP (s) | Speedup |
 |---|---|---|---|
-| 9 | 0.006039 | 0.000871 | 6.93x |
-| 10 | 0.059160 | 0.007174 | 8.24x |
-| 11 | 0.657323 | 0.075407 | 8.71x |
-| 12 | 7.809986 | 1.004821 | 7.77x |
-| 13 | 103.446021 | 11.693761 | 8.84x |
-| 14 | 1468.660328 | 162.986940 | 9.01x |
+| 9 | 0.006039 | 0. | x |
+| 10 | 0.059160 | 0. | x |
+| 11 | 0.657323 | 0. | x |
+| 12 | 7.809986 | 0. | x |
+| 13 | 103.446021 | 0. | x |
+| 14 | 1468.660328 | 0. | x |
 
 [//]: # (UNIQUE_PP_ALGO_BENCHMARK_INTEL_END)
 
