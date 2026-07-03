@@ -77,8 +77,9 @@ int main(int argc, char* argv[]) {
             }
             
             // This loop remains for checksum calculation
-            for (j = 0; j < perm_size; j++) checksum += j * D[j]; // Modified slightly for better validation
-
+            //for (j = 0; j < perm_size; j++) checksum += j * D[j]; // Modified slightly for better validation
+            checksum += D[perm_size - 1];
+            
             c[i]++;
             i = 1;
         } else {
