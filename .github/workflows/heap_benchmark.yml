@@ -6,7 +6,7 @@ on:
     paths:
       - '**/heap_perm_benchmark.cpp'
   workflow_dispatch:
-  
+
 jobs:
   run-benchmark:
     runs-on: windows-latest
