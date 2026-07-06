@@ -27,7 +27,7 @@ The **Position-Pure Algorithm** and **Ring-Cascade-Permutation-Algorithm** repre
 * **[Ring-Cascade-Permutation-Algorithm](https://github.com/Yusheng-Hu/Ring-Cascade-Permutation-Algorithm) :** Specifically engineered for circular symmetry. While it introduces controlled spatial overhead, it shatters traditional performance barriers by realizing an **O((n-1)!)** complexity framework.
 
 #### **Key Insights**
-* **Significant Speedup:** `permPure_full` consistently outperforms Heap's Algorithm by a factor of approximately **7x**.
+* **Speedup:** `permPure_full` consistently outperforms Heap's Algorithm by a factor of approximately **1.7x**.
 * **Algorithmic Efficiency:** The performance gap highlights the superior memory access patterns and lower computational overhead inherent in the PositionPure algorithm.
 * **Scalability:** As the permutation space grows factorially, the performance gap remains stable, demonstrating excellent algorithmic efficiency for large-scale generation.
 
@@ -46,7 +46,7 @@ The **PositionPure** algorithm is a high-performance, iterative approach to gene
 The algorithm utilizes an **iterative state machine** to eliminate recursion overhead and leverages **hardware affinity binding** via the Windows API to minimize context-switching noise, with performance verified to nanosecond-level accuracy through **high-precision benchmarking**.
 
 20260703: 
-The efficiency of the Heaps algorithm was underestimated due to oversight in the checksum check. Therefore, the pp performance has been corrected to speedup 1.X. But Heap’s algorithm can also be optimized. **need check very soon.**
+The efficiency of the s algorithm was underestimated due to oversight in the checksum check. Therefore, the pp performance has been corrected to speedup 1.X. But Heap’s algorithm can also be optimized. **need check very soon.**
 
 [//]: # (UNIQUE_PP_ALGO_BENCHMARK_AMD_START)
 
