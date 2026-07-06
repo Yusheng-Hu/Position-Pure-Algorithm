@@ -1,6 +1,5 @@
-name: Permutation Benchmark
+name: Heap vs PP Benchmark
 
-# Trigger the workflow manually or on push to the file
 on:
   push:
     paths:
@@ -26,25 +25,17 @@ jobs:
     - name: Compile and Run Benchmark
       shell: msys2 {0}
       run: |
-        # 1. Dynamically locate the directory containing the source file
+        # 1. Dynamically locate the directory
         FILE_PATH=$(find . -name "heap_perm_benchmark.cpp" | head -n 1)
-        
-        if [ -z "$FILE_PATH" ]; then
-          echo "Error: heap_perm_benchmark.cpp not found!"
-          exit 1
-        fi
-        
         TARGET_DIR=$(dirname "$FILE_PATH")
-        echo "Found source in: $TARGET_DIR"
         cd "$TARGET_DIR"
         
-        # 2. Compile the engine with optimization flags
-        # -O3: Aggressive optimization
-        # -march=native: Target current EPYC CPU architecture
-        # -static: Create a portable binary
-        echo "Compiling..."
+        # 2. Compile
         g++ -O3 -march=native heap_perm_benchmark.cpp -o heap_bench.exe -static -lpthread
         
-        # 3. Execute the benchmark and capture output
-        echo "Running Benchmark..."
-        ./heap_bench.exe
+        # 3. Run the benchmark 3 times to observe stability
+        echo "Starting 3-run stability test..."
+        for i in {1..3}; do
+          echo "--- Run #$i ---"
+          ./heap_bench.exe
+        done
