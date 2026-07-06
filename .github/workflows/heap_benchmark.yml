@@ -1,10 +1,9 @@
 name: Permutation Benchmark
 
-# Trigger the workflow manually from the GitHub Actions tab
 on:
   push:
     paths:
-      - '**/heap_perm_benchmark.cpp'
+      - '**/permpure_dpp.cpp'
   workflow_dispatch:
 
 jobs:
@@ -23,14 +22,27 @@ jobs:
           mingw-w64-x86_64-gcc
           mingw-w64-x86_64-make
 
-    - name: Compile Benchmark
+    - name: Compile and Run Benchmark
       shell: msys2 {0}
       run: |
-        # Use -O3 and -march=native to target the host CPU architecture for peak performance
-        g++ -O3 -march=native -o heap_bench.exe heap_perm_benchmark.cpp -static
+        # 1. Dynamically locate the directory containing the source file
+        # Using 'find' with '-name' to locate the file
+        FILE_PATH=$(find . -name "permpure_dpp.cpp" | head -n 1)
         
-    - name: Run Benchmark
-      shell: msys2 {0}
-      run: |
-        # Execute the compiled benchmark binary
-        ./heap_bench.exe
+        if [ -z "$FILE_PATH" ]; then
+          echo "Error: permpure_dpp.cpp not found!"
+          exit 1
+        fi
+        
+        TARGET_DIR=$(dirname "$FILE_PATH")
+        echo "Found source in: $TARGET_DIR"
+        cd "$TARGET_DIR"
+        
+        # 2. Compile the engine with optimization flags
+        # Added -static to ensure portability on the runner
+        echo "Compiling..."
+        g++ -O3 -march=native permpure_dpp.cpp -o permpure_dpp.exe -static -lpthread
+        
+        # 3. Execute the benchmark
+        echo "Running Benchmark..."
+        ./permpure_dpp.exe
