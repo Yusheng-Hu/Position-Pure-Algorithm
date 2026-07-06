@@ -1,9 +1,10 @@
 name: Permutation Benchmark
 
+# Trigger the workflow manually or on push to the file
 on:
   push:
     paths:
-      - '**/permpure_dpp.cpp'
+      - '**/heap_perm_benchmark.cpp'
   workflow_dispatch:
 
 jobs:
@@ -26,11 +27,10 @@ jobs:
       shell: msys2 {0}
       run: |
         # 1. Dynamically locate the directory containing the source file
-        # Using 'find' with '-name' to locate the file
-        FILE_PATH=$(find . -name "permpure_dpp.cpp" | head -n 1)
+        FILE_PATH=$(find . -name "heap_perm_benchmark.cpp" | head -n 1)
         
         if [ -z "$FILE_PATH" ]; then
-          echo "Error: permpure_dpp.cpp not found!"
+          echo "Error: heap_perm_benchmark.cpp not found!"
           exit 1
         fi
         
@@ -39,10 +39,12 @@ jobs:
         cd "$TARGET_DIR"
         
         # 2. Compile the engine with optimization flags
-        # Added -static to ensure portability on the runner
+        # -O3: Aggressive optimization
+        # -march=native: Target current EPYC CPU architecture
+        # -static: Create a portable binary
         echo "Compiling..."
-        g++ -O3 -march=native permpure_dpp.cpp -o permpure_dpp.exe -static -lpthread
+        g++ -O3 -march=native heap_perm_benchmark.cpp -o heap_bench.exe -static -lpthread
         
-        # 3. Execute the benchmark
+        # 3. Execute the benchmark and capture output
         echo "Running Benchmark..."
-        ./permpure_dpp.exe
+        ./heap_bench.exe
