@@ -1,0 +1,33 @@
+name: Permutation Benchmark
+
+# Trigger the workflow manually from the GitHub Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  run-benchmark:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup MSYS2 (MinGW)
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          mingw-w64-x86_64-gcc
+          mingw-w64-x86_64-make
+
+    - name: Compile Benchmark
+      shell: msys2 {0}
+      run: |
+        # Use -O3 and -march=native to target the host CPU architecture for peak performance
+        g++ -O3 -march=native -o heap_bench.exe heap_perm_benchmark.cpp -static
+        
+    - name: Run Benchmark
+      shell: msys2 {0}
+      run: |
+        # Execute the compiled benchmark binary
+        ./heap_bench.exe
