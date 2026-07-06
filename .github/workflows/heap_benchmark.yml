@@ -2,8 +2,12 @@ name: Permutation Benchmark
 
 # Trigger the workflow manually from the GitHub Actions tab
 on:
+  push:
+    paths:
+      - '**/heap_perm_benchmark.cpp'
   workflow_dispatch:
 
+jobs
 jobs:
   run-benchmark:
     runs-on: windows-latest
