@@ -1,4 +1,4 @@
-name: Heap vs PP Benchmark
+name: LexSG Benchmark
 
 on:
   push:
@@ -14,6 +14,13 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
+    - name: Get CPU Information
+      shell: powershell
+      run: |
+        echo "### CPU Information"
+        # Retrieve and display CPU hardware details
+        Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed | Format-List
+
     - name: Setup MSYS2 (MinGW)
       uses: msys2/setup-msys2@v2
       with:
@@ -25,12 +32,12 @@ jobs:
     - name: Compile and Run Benchmark
       shell: msys2 {0}
       run: |
-        # 1. Dynamically locate the directory
+        # 1. Dynamically locate the directory containing the source file
         FILE_PATH=$(find . -name "LexSG.cpp" | head -n 1)
         TARGET_DIR=$(dirname "$FILE_PATH")
         cd "$TARGET_DIR"
         
-        # 2. Compile
+        # 2. Compile the benchmark source
         g++ -O3 -march=native LexSG.cpp -o LexSG_bench.exe -static -lpthread
         
         # 3. Run the benchmark 3 times to observe stability
