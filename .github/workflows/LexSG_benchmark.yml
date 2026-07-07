@@ -44,7 +44,7 @@ jobs:
         # 2. Compile with stable optimization flags
         # -march=x86-64-v3 ensures consistent instruction set utilization across different runners
         echo "Compiling with -O3 -march=x86-64-v3..."
-        g++ -O3 -march=native-std=c++17 LexSG.cpp -o LexSG_bench.exe
+        g++ -O3 -march=native -std=c++17 LexSG.cpp -o LexSG_bench.exe
         
         # 3. Run the benchmark
         echo "Starting 3-run stability test..."
