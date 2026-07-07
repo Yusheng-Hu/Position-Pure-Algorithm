@@ -200,6 +200,21 @@ The following table shows the execution time (in seconds) for generating all per
 *Note: Benchmarks conducted on standard GitHub-hosted runners with `-O3` optimization.*
 
 ---
+## LexSG (Lexicographical Structure Generation) Performance Benchmarks
+Local Host (Intel Core Architecture)
+* **Compiler:** `g++ -O3 -march=native -std=c++17`
+
+
+| Algorithm | Time (s) | ns/perm | Speedup vs std | n |
+|---|---|---|---|---|
+| std::next_permutation | 0.943258 | 1.96922 | 1.00x | 12 |
+| Original Algorithm L  | 1.06427 | 2.22185 | 0.886294x | 12 |
+| LexSG Pure Logic      | 0.683509 | 1.42695 | 1.38002x | 12 |
+| std::next_permutation | 14.279 | 2.29308 | 1.00x | 13 |
+| Original Algorithm L  | 11.5261 | 1.85099 | 1.23884x | 13 |
+| LexSG Pure Logic      | 8.93816 | 1.43538 | 1.59754x | 13 |
+
+
 ## LexCHA (Lexicographical Co-designed Hardware Acceleration) Performance Benchmarks
 
 The following tables show the performance comparison between the standard C++ library (`std::next_permutation`) and the LexCHA SIMD-accelerated engine across different CPU architectures.
