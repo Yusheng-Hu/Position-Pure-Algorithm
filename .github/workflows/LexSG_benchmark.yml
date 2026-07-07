@@ -14,12 +14,16 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-    - name: Get CPU Information
+    - name: System Information
       shell: powershell
       run: |
-        echo "### CPU Information"
-        # Retrieve and display CPU hardware details
+        echo "### Hardware and Environment Info"
+        echo "CPU:"
         Get-CimInstance Win32_Processor | Select-Object Name, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed | Format-List
+        echo "Memory:"
+        Get-CimInstance Win32_ComputerSystem | Select-Object TotalPhysicalMemory | Format-List
+        echo "OS:"
+        Get-CimInstance Win32_OperatingSystem | Select-Object Caption, Version | Format-List
 
     - name: Setup MSYS2 (MinGW)
       uses: msys2/setup-msys2@v2
@@ -32,15 +36,17 @@ jobs:
     - name: Compile and Run Benchmark
       shell: msys2 {0}
       run: |
-        # 1. Dynamically locate the directory containing the source file
+        # 1. Locate the directory
         FILE_PATH=$(find . -name "LexSG.cpp" | head -n 1)
         TARGET_DIR=$(dirname "$FILE_PATH")
         cd "$TARGET_DIR"
         
-        # 2. Compile the benchmark source
-        g++ -O3 -march=native LexSG.cpp -o LexSG_bench.exe -static -lpthread
+        # 2. Compile with stable optimization flags
+        # -march=x86-64-v3 ensures consistent instruction set utilization across different runners
+        echo "Compiling with -O3 -march=x86-64-v3..."
+        g++ -O3 -march=x86-64-v3 LexSG.cpp -o LexSG_bench.exe -static -lpthread
         
-        # 3. Run the benchmark 3 times to observe stability
+        # 3. Run the benchmark
         echo "Starting 3-run stability test..."
         for i in {1..3}; do
           echo "--- Run #$i ---"
