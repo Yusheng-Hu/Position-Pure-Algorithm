@@ -83,20 +83,18 @@ void callback_func(const int* perm, int n) {
     g_check += perm[n-1];
 }
 
-double run_test(const char* name, void (*func)(int*, int, PermCallback), int n, double& ns_per_perm) {
+double run_test(const char* name, void (*func)(int*, int, PermCallback), int n, double& ns_per_perm, uint64_t& checksum) {
     int* arr = new int[n];
     g_count = 0; 
     g_check = 0;
     
     auto start = std::chrono::high_resolution_clock::now();
-    try {
-        func(arr, n, callback_func);
-    } catch (...) {
-    }
+    func(arr, n, callback_func);
     auto end = std::chrono::high_resolution_clock::now();
     
     double elapsed_s = std::chrono::duration<double>(end - start).count();
     ns_per_perm = elapsed_s * 1e9 / g_count;
+    checksum = g_check;
     
     delete[] arr;
     return elapsed_s;
@@ -104,18 +102,19 @@ double run_test(const char* name, void (*func)(int*, int, PermCallback), int n, 
 
 int main() {
     const int N = 13;
-    std::cout << "=== Performance Comparison (N=" << N << ", limit=" << g_limit << ") ===\n\n";
+    std::cout << "=== Performance Comparison (N=" << N << ") ===\n\n";
 
     double ns_std, ns_orig, ns_lexsg;
-    double t_std  = run_test("std::next_permutation", generate_all_std, N, ns_std);
-    double t_orig = run_test("Original Algorithm L",  generate_all_original, N, ns_orig);
-    double t_lexsg = run_test("LexSG Pure Logic",     generate_all_lexsg, N, ns_lexsg);
+    uint64_t chk_std, chk_orig, chk_lexsg;
+    double t_std  = run_test("std::next_permutation", generate_all_std, N, ns_std, chk_std);
+    double t_orig = run_test("Original Algorithm L",  generate_all_original, N, ns_orig, chk_orig);
+    double t_lexsg = run_test("LexSG Pure Logic",     generate_all_lexsg, N, ns_lexsg, chk_lexsg);
     
-    std::cout << "\n| Algorithm | Time (s) | ns/perm | Speedup vs std |\n";
-    std::cout << "|---|---|---|---|\n";
-    std::cout << "| std::next_permutation | " << t_std << " | " << ns_std << " | 1.00x |\n";
-    std::cout << "| Original Algorithm L  | " << t_orig << " | " << ns_orig << " | " << (ns_std / ns_orig) << "x |\n";
-    std::cout << "| LexSG Pure Logic      | " << t_lexsg << " | " << ns_lexsg << " | " << (ns_std / ns_lexsg) << "x |\n";
+    std::cout << "\n| Algorithm | Time (s) | ns/perm | Speedup vs std | Checksum |\n";
+    std::cout << "|---|---|---|---|---|\n";
+    std::cout << "| std::next_permutation | " << t_std << " | " << ns_std << " | 1.00x | " << chk_std << " |\n";
+    std::cout << "| Original Algorithm L  | " << t_orig << " | " << ns_orig << " | " << (ns_std / ns_orig) << "x | " << chk_orig << " |\n";
+    std::cout << "| LexSG Pure Logic      | " << t_lexsg << " | " << ns_lexsg << " | " << (ns_std / ns_lexsg) << "x | " << chk_lexsg << " |\n";
     
     return 0;
 }
