@@ -201,6 +201,8 @@ The following table shows the execution time (in seconds) for generating all per
 
 ---
 ## LexSG (Lexicographical Structure Generation) Performance Benchmarks
+**While the LexSG algorithm was developed independently as part of this project, further literature review revealed that the underlying lexicographical permutation logic was already documented in Jörg Arndt’s Matters Computational.**
+
 Local Host (Intel Core Architecture)
 * **Compiler:** `g++ -O3 -march=native -std=c++17`
 
